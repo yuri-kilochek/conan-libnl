@@ -18,28 +18,46 @@ class LibNLConan(ConanFile):
     options = {
         'shared': [False, True],
         'fPIC': [False, True],
+        'cli': [False, True],
     }
     default_options = {
         'shared': True,
         'fPIC': False,
+        'cli': False,
     }
 
     def configure(self):
         if self.settings.os != 'Linux':
             raise ConanInvalidConfiguration('This is a Linux-only library.')
+
         if self.options.shared:
             self.options.fPIC = True
 
     def source(self):
-        self.run('git clone --branch libnl' + self.version.replace('.', '_') +
-                 ' --depth 1 git://github.com/thom311/libnl.git .')
+        self.run('git clone --branch {tag} --depth 1 {url} .'.format(
+            tag='libnl{}'.format(self.version.replace('.', '_')),
+            url='git://github.com/thom311/libnl.git',
+        ))
 
     def build(self):
         self.run('sh autogen.sh')
-        autotools = AutoToolsBuildEnvironment(self);
-        autotools.configure(args=[
-            '--enable-static=' + ('no', 'yes')[not self.options.shared],
-            '--enable-shared=' + ('no', 'yes')[bool(self.options.shared)],
-        ])
+
+        autotools = AutoToolsBuildEnvironment(self)
+
+        args = []
+
+        if self.options.shared:
+            args.append('--enable-static=no')
+        else:
+            args.append('--enable-shared=no')
+
+        if 'Rel' in self.settings.build_type:
+            args.append('--disable-debug')
+
+        if not self.options.cli:
+            args.append('--enable-cli=no')
+
+        autotools.configure(args=args)
+
         autotools.install()
 
