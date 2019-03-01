@@ -1,5 +1,6 @@
 from conans import ConanFile, AutoToolsBuildEnvironment, tools
 from conans.errors import ConanInvalidConfiguration
+import glob, shutil, os, os.path
 
 class LibNLConan(ConanFile):
     name = 'libnl'
@@ -61,3 +62,11 @@ class LibNLConan(ConanFile):
 
         autotools.install()
 
+        def here(*args):
+            return os.path.join(self.package_folder, *args)
+        shutil.rmtree(here('share'))
+        shutil.rmtree(here('lib', 'pkgconfig'))
+        for path in glob.iglob(here('lib', '*.la')):
+            os.remove(path)
+
+        
