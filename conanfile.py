@@ -73,5 +73,5 @@ class LibNLConan(ConanFile):
         self.cpp_info.includedirs = [os.path.join('include', 'libnl{}'.format(
             self.version.split('.')[0],
         ))]
+        self.cpp_info.libs = tools.collect_libs(self)
 
-        
