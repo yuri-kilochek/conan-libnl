@@ -69,4 +69,9 @@ class LibNLConan(ConanFile):
         for path in glob.iglob(here('lib', '*.la')):
             os.remove(path)
 
+    def package_info(self):
+        self.cpp_info.includedirs = [os.path.join('include', 'libnl{}'.format(
+            self.version.split('.')[0],
+        ))]
+
         
