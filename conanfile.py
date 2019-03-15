@@ -1,5 +1,4 @@
 from conans import ConanFile, AutoToolsBuildEnvironment, tools
-from conans.errors import ConanInvalidConfiguration
 import glob, shutil, os, os.path
 
 class LibNLConan(ConanFile):
