@@ -22,17 +22,16 @@ class LibNLConan(ConanFile):
         'cli': [False, True],
     }
     default_options = {
-        'shared': True,
-        'fPIC': False,
+        'shared': False,
+        'fPIC': True,
         'cli': False,
     }
 
     def configure(self):
-        if self.settings.os != 'Linux':
-            raise ConanInvalidConfiguration('This is a Linux-only library.')
-
         if self.options.shared:
             self.options.fPIC = True
+        self.settings.compiler.remove('libcxx')
+        self.settings.compiler.remove('exception')
 
     def source(self):
         self.run('git clone --branch {tag} --depth 1 {url} .'.format(
